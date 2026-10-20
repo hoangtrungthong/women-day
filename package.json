@@ -1,0 +1,14 @@
+{
+  "name": "women-day",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Thiep chuc mung ngay Phu nu Viet Nam 20/10",
+  "main": "electron/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev"
+  },
+  "devDependencies": {
+    "electron": "33.2.1"
+  }
+}

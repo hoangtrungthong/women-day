@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chúc mừng Ngày Phụ nữ Việt Nam 20/10</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Dancing+Script:wght@600;700&family=Quicksand:wght@400;600;700&family=Lora:ital,wght@0,500;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<canvas id="fx" aria-hidden="true"></canvas>
+
+<!-- Menu thu gọn: mặc định chỉ hiện một nút hoa nhỏ ở góc -->
+<div class="fab-wrap" id="fab-wrap">
+  <nav class="fab-menu" id="fab-menu" aria-hidden="true">
+    <button id="btn-edit" class="fab-item" aria-pressed="false"><b>✎</b><span>Chỉnh sửa</span></button>
+    <button id="btn-layout" class="fab-item"><b>▦</b><span>Kiểu</span></button>
+    <button id="btn-theme" class="fab-item"><b>◉</b><span>Theme</span></button>
+    <button id="btn-share" class="fab-item"><b>↗</b><span>Chia sẻ</span></button>
+    <button id="btn-data" class="fab-item"><b>⇅</b><span>Dữ liệu</span></button>
+  </nav>
+  <button class="fab" id="fab" aria-expanded="false" aria-controls="fab-menu" aria-label="Mở menu">
+    <svg viewBox="0 0 48 48" aria-hidden="true">
+      <!-- mỗi cánh bọc trong <g> và chỉ quay bằng attribute transform,
+           không đặt transform-origin bằng CSS để tâm quay không bị cộng dồn -->
+      <g class="fab-petals">
+        <g transform="rotate(0 24 24)"><ellipse cx="24" cy="14.5" rx="5.5" ry="9.5"/></g>
+        <g transform="rotate(72 24 24)"><ellipse cx="24" cy="14.5" rx="5.5" ry="9.5"/></g>
+        <g transform="rotate(144 24 24)"><ellipse cx="24" cy="14.5" rx="5.5" ry="9.5"/></g>
+        <g transform="rotate(216 24 24)"><ellipse cx="24" cy="14.5" rx="5.5" ry="9.5"/></g>
+        <g transform="rotate(288 24 24)"><ellipse cx="24" cy="14.5" rx="5.5" ry="9.5"/></g>
+      </g>
+      <circle class="fab-core" cx="24" cy="24" r="5.6"/>
+    </svg>
+  </button>
+</div>
+
+<main class="stage" id="stage">
+  <section class="greet" id="card">
+    <div class="greet-head">
+      <p class="eyebrow" data-field="eyebrow" data-placeholder="Ngày Phụ nữ Việt Nam"></p>
+      <h1 class="title" data-field="title" data-placeholder="Chúc mừng 20/10"></h1>
+      <p class="to" data-field="to" data-placeholder="Gửi tới…"></p>
+    </div>
+
+    <div class="quote-box" id="quote-box">
+      <blockquote id="quote" aria-live="polite"></blockquote>
+      <div class="quote-nav">
+        <button id="quote-prev" class="btn btn-ghost" aria-label="Câu chúc trước">‹</button>
+        <button id="quote-play" class="btn btn-ghost" aria-label="Tạm dừng" aria-pressed="true">❚❚</button>
+        <span id="quote-count" class="quote-count"></span>
+        <button id="quote-next" class="btn btn-ghost" aria-label="Câu chúc sau">›</button>
+      </div>
+      <div class="quote-bar" aria-hidden="true"><span></span></div>
+    </div>
+
+    <div class="greet-foot">
+      <p class="message" data-field="message" data-placeholder="Viết thêm lời nhắn của bạn…"></p>
+      <p class="from" data-field="from" data-placeholder="— Người gửi"></p>
+    </div>
+  </section>
+
+  <section class="gallery-wrap" id="gallery-wrap">
+    <h2 class="section-title">Khoảnh khắc</h2>
+    <div class="gallery" id="gallery"></div>
+  </section>
+</main>
+
+<div class="edit-dock" id="edit-dock" hidden>
+  <button class="btn" id="btn-quotes">Quản lý câu chúc</button>
+  <button class="btn" id="btn-media">Thêm ảnh / video</button>
+  <button class="btn btn-ghost" id="btn-reset">Khôi phục mặc định</button>
+  <span class="hint">Nhấn trực tiếp vào chữ để sửa</span>
+</div>
+
+<!-- Layout panel -->
+<div class="panel" id="panel-layout" hidden role="dialog" aria-label="Kiểu trình bày">
+  <div class="panel-head"><h3>Kiểu trình bày</h3><button class="btn btn-ghost panel-close">✕</button></div>
+  <div class="panel-body">
+    <p class="hint">Chọn cách sắp xếp lời chúc trên trang.</p>
+    <div class="layout-grid" id="layout-grid"></div>
+  </div>
+</div>
+
+<!-- Theme panel -->
+<div class="panel" id="panel-theme" hidden role="dialog" aria-label="Chọn theme">
+  <div class="panel-head"><h3>Theme</h3><button class="btn btn-ghost panel-close">✕</button></div>
+  <div class="panel-body">
+    <div class="theme-grid" id="theme-grid"></div>
+    <h4>Tạo / tuỳ chỉnh theme</h4>
+    <div class="form-grid">
+      <label>Tên theme <input type="text" id="t-name" placeholder="Theme của tôi"></label>
+      <label>Nền 1 <input type="color" id="t-bg1"></label>
+      <label>Nền 2 <input type="color" id="t-bg2"></label>
+      <label>Màu thiệp <input type="color" id="t-card"></label>
+      <label>Màu chữ <input type="color" id="t-text"></label>
+      <label>Màu nhấn <input type="color" id="t-accent"></label>
+      <label>Font tiêu đề
+        <select id="t-font">
+          <option value="'Dancing Script', cursive">Dancing Script</option>
+          <option value="'Playfair Display', serif">Playfair Display</option>
+          <option value="'Quicksand', sans-serif">Quicksand</option>
+          <option value="'Lora', serif">Lora</option>
+        </select>
+      </label>
+      <label>Hiệu ứng nền
+        <select id="t-fx">
+          <option value="none">Không</option>
+          <option value="bloom">Hoa nở ✿</option>
+          <option value="petal">Cánh hoa rơi</option>
+          <option value="heart">Trái tim</option>
+          <option value="sparkle">Lấp lánh</option>
+          <option value="confetti">Kim tuyến</option>
+        </select>
+      </label>
+    </div>
+    <div class="panel-actions">
+      <button class="btn btn-primary" id="t-apply">Áp dụng</button>
+      <button class="btn" id="t-save">Lưu thành theme mới</button>
+    </div>
+  </div>
+</div>
+
+<!-- Quotes panel -->
+<div class="panel" id="panel-quotes" hidden role="dialog" aria-label="Quản lý câu chúc">
+  <div class="panel-head"><h3>Câu chúc</h3><button class="btn btn-ghost panel-close">✕</button></div>
+  <div class="panel-body">
+    <h4 style="margin-top:0">Bộ lời chúc</h4>
+    <div class="pack-grid" id="pack-grid"></div>
+    <h4>Danh sách câu chúc</h4>
+    <div class="row">
+      <input type="text" id="q-input" placeholder="Nhập câu chúc mới…">
+      <button class="btn btn-primary" id="q-add">Thêm</button>
+    </div>
+    <button class="btn btn-ghost" id="q-suggest">Gợi ý thêm câu chúc hay</button>
+    <ul class="quote-list" id="quote-list"></ul>
+  </div>
+</div>
+
+<!-- Media panel -->
+<div class="panel" id="panel-media" hidden role="dialog" aria-label="Thêm ảnh video">
+  <div class="panel-head"><h3>Ảnh &amp; video</h3><button class="btn btn-ghost panel-close">✕</button></div>
+  <div class="panel-body">
+    <label class="drop" id="drop">
+      <input type="file" id="file-input" accept="image/*,video/*" multiple hidden>
+      <span>Kéo thả hoặc bấm để chọn ảnh / video từ máy</span>
+    </label>
+    <div class="row">
+      <input type="text" id="m-url" placeholder="Dán link ảnh, video hoặc YouTube…">
+      <button class="btn btn-primary" id="m-add">Thêm link</button>
+    </div>
+    <div class="media-list" id="media-list"></div>
+  </div>
+</div>
+
+<!-- Data panel -->
+<div class="panel" id="panel-data" hidden role="dialog" aria-label="Dữ liệu">
+  <div class="panel-head"><h3>Dữ liệu</h3><button class="btn btn-ghost panel-close">✕</button></div>
+  <div class="panel-body">
+    <p class="hint">Nội dung được lưu trên máy bạn. Xuất file để gửi cho người khác.</p>
+    <div class="panel-actions">
+      <button class="btn btn-primary" id="d-export">Xuất file JSON</button>
+      <label class="btn">Nhập file JSON<input type="file" id="d-import" accept="application/json" hidden></label>
+    </div>
+  </div>
+</div>
+
+<div class="backdrop" id="backdrop" hidden></div>
+<div class="toast" id="toast" hidden></div>
+
+<script src="js/data.js"></script>
+<script src="js/store.js"></script>
+<script src="js/fx.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
